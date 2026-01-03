@@ -1,70 +1,71 @@
 const WORKER_URL = "https://steep-voice-0451.gokberkk.workers.dev";
 
 const input = document.getElementById("pairInput");
-const table = document.getElementById("priceTable");
+const tableBody = document.getElementById("priceTable");
 const statusEl = document.getElementById("status");
+const addBtn = document.getElementById("addBtn");
+const refreshBtn = document.getElementById("refreshBtn");
 
-async function fetchPair(pair) {
-  const res = await fetch(`${WORKER_URL}/?pair=${encodeURIComponent(pair)}`);
-  if (!res.ok) throw new Error("Worker fetch failed");
-  return res.json();
+function setStatus(t) {
+  statusEl.textContent = t;
+}
+
+async function fetchTicker(pair) {
+  const r = await fetch(`${WORKER_URL}/?pair=${encodeURIComponent(pair)}`);
+  if (!r.ok) throw new Error("fetch");
+  const j = await r.json();
+  return j.data[0];
+}
+
+function upsert(d) {
+  let tr = tableBody.querySelector(`tr[data-pair="${d.pair}"]`);
+  const last = Number(d.last).toLocaleString("tr-TR");
+  const pct = Number(d.dailyPercent).toFixed(2) + "%";
+  const time = new Date().toLocaleTimeString("tr-TR");
+
+  if (!tr) {
+    tr = document.createElement("tr");
+    tr.dataset.pair = d.pair;
+    tr.innerHTML = `<td></td><td></td><td></td><td></td>`;
+    tableBody.appendChild(tr);
+  }
+
+  tr.children[0].textContent = d.pair;
+  tr.children[1].textContent = last;
+  tr.children[2].textContent = pct;
+  tr.children[3].textContent = time;
 }
 
 async function addPair() {
   const pair = input.value.trim().toUpperCase();
   if (!pair) return;
-
-  statusEl.textContent = "Yükleniyor...";
-
+  setStatus("Yükleniyor...");
   try {
-    const json = await fetchPair(pair);
-
-    if (!json.success || !json.data || !json.data.length) {
-      throw new Error("Geçersiz veri");
-    }
-
-    const d = json.data[0];
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${d.pair}</td>
-      <td>${Number(d.last).toLocaleString("tr-TR")}</td>
-      <td>${Number(d.dailyPercent).toFixed(2)}%</td>
-      <td>${new Date().toLocaleTimeString("tr-TR")}</td>
-    `;
-    table.appendChild(row);
-
-    statusEl.textContent = "Hazır";
+    const d = await fetchTicker(pair);
+    upsert(d);
+    setStatus("Hazır");
     input.value = "";
-  } catch (err) {
-    console.error(err);
-    statusEl.textContent = "Hata oluştu";
-    alert("Veri alınamadı (Worker kontrol et)");
+  } catch {
+    setStatus("Hata");
+    alert("Veri alınamadı");
   }
 }
 
 async function refreshAll() {
-  statusEl.textContent = "Güncelleniyor...";
-
-  const rows = [...table.querySelectorAll("tr")];
-  table.innerHTML = "";
-
+  const rows = [...tableBody.querySelectorAll("tr[data-pair]")];
+  if (!rows.length) return;
+  setStatus("Güncelleniyor...");
   for (const r of rows) {
-    const pair = r.children[0].textContent;
     try {
-      const json = await fetchPair(pair);
-      const d = json.data[0];
-
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${d.pair}</td>
-        <td>${Number(d.last).toLocaleString("tr-TR")}</td>
-        <td>${Number(d.dailyPercent).toFixed(2)}%</td>
-        <td>${new Date().toLocaleTimeString("tr-TR")}</td>
-      `;
-      table.appendChild(row);
+      const d = await fetchTicker(r.dataset.pair);
+      upsert(d);
     } catch {}
   }
-
-  statusEl.textContent = "Hazır";
+  setStatus("Hazır");
 }
+
+addBtn.onclick = addPair;
+refreshBtn.onclick = refreshAll;
+input.onkeydown = (e) => e.key === "Enter" && addPair();
+
+setStatus("Hazır");
