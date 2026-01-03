@@ -26,7 +26,7 @@ function nowStr() {
 }
 
 async function fetchTickerAll() {
-  const r = await fetch("https://api.btcturk.com/api/v2/ticker");
+  const r = await fetch("https://steep-voice-0451.gokberkk.workers.dev/");
   if (!r.ok) throw new Error("Ticker alınamadı");
   const j = await r.json();
   return j.data || [];
@@ -95,3 +95,4 @@ if ("serviceWorker" in navigator) {
 savePairs();
 refresh();
 setInterval(refresh, 15000);
+
