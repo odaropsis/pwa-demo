@@ -1,38 +1,44 @@
 <!doctype html>
 <html lang="tr">
 <head>
- <meta charset="utf-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1" />
- <title>BtcTurk TRY Takip (Demo)</title>
- <link rel="manifest" href="manifest.json" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Coin Takip</title>
+  <link rel="manifest" href="manifest.json">
 </head>
-<body style="font-family: system-ui; padding: 16px;">
 
- <h2>BtcTurk TRY Takip (Demo)</h2>
+<body style="font-family: Arial, sans-serif; padding:16px;">
 
- <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-   <input id="pairInput" placeholder="Örn: BTCTRY" value="BTCTRY" style="padding:8px; width:160px;" />
-   <button id="addBtn" style="padding:8px 12px;">Ekle</button>
-   <button id="refreshBtn" style="padding:8px 12px;">Yenile</button>
-   <span id="status" style="opacity:.8;">Hazır</span>
- </div>
+  <h2>Coin Takip (TRY)</h2>
 
- <p style="opacity:.7; margin-top:10px;">
-   Şimdilik sadece TRY paritelerinin fiyatını gösterir.
- </p>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <input
+      id="pairInput"
+      placeholder="BTCTRY"
+      style="padding:8px; width:140px;"
+    >
+    <button id="addBtn" style="padding:8px;">Ekle</button>
+    <button id="refreshBtn" style="padding:8px;">Yenile</button>
+    <span id="status" style="margin-left:8px;">Hazır</span>
+  </div>
 
- <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse; margin-top:10px;">
-   <thead>
-     <tr>
-       <th>Parite</th>
-       <th>Son Fiyat</th>
-       <th>24s %</th>
-       <th>Güncelleme</th>
-     </tr>
-   </thead>
-   <tbody id="priceTable"></tbody>
- </table>
+  <table
+    border="1"
+    cellpadding="8"
+    cellspacing="0"
+    style="margin-top:12px; width:100%; border-collapse:collapse;"
+  >
+    <thead>
+      <tr>
+        <th>Parite</th>
+        <th>Son Fiyat</th>
+        <th>24s %</th>
+        <th>Güncelleme</th>
+      </tr>
+    </thead>
+    <tbody id="priceTable"></tbody>
+  </table>
 
- <script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
